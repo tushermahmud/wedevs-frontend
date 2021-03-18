@@ -31,279 +31,246 @@ import {
     DELETE_REVIEW_SUCCESS,
     DELETE_REVIEW_RESET,
     DELETE_REVIEW_FAIL,
-    CLEAR_ERRORS
-
-} from '../constant/productConstants'
-
-export const productsReducer = (state = { products: [] }, action) => {
+    CLEAR_ERRORS,
+} from "../constant/productConstants";
+const initialState = {
+    loading: false,
+    products: [],
+    error: null,
+};
+export const productsReducer = (state = initialState, action) => {
     switch (action.type) {
         case ALL_PRODUCTS_REQUEST:
-        case ADMIN_PRODUCTS_REQUEST:
-            return {
-                loading: true,
-                products: []
-            }
-
-        case ALL_PRODUCTS_SUCCESS:
-            return {
-                loading: false,
-                products: action.payload.products,
-                productsCount: action.payload.productsCount,
-                resPerPage: action.payload.resPerPage,
-                filteredProductsCount: action.payload.filteredProductsCount
-            }
-
-        case ADMIN_PRODUCTS_SUCCESS:
-            return {
-                loading: false,
-                products: action.payload
-            }
-
-        case ALL_PRODUCTS_FAIL:
-        case ADMIN_PRODUCTS_FAIL:
-            return {
-                loading: false,
-                error: action.payload
-            }
-
-        case CLEAR_ERRORS:
             return {
                 ...state,
-                error: null
-            }
-
+                loading: true,
+                products: action.payload.products,
+            };
         default:
             return state;
     }
-}
+};
 
 export const newProductReducer = (state = { product: {} }, action) => {
     switch (action.type) {
-
         case NEW_PRODUCT_REQUEST:
             return {
-                loading: true
-            }
+                loading: true,
+            };
 
         case NEW_PRODUCT_SUCCESS:
             return {
                 loading: false,
                 success: true,
-                product: action.payload.product
-            }
+                product: action.payload.product,
+            };
 
         case NEW_PRODUCT_FAIL:
             return {
-                error: action.payload
-            }
+                error: action.payload,
+            };
 
         case NEW_PRODUCT_RESET:
             return {
-                success: false
-            }
+                success: false,
+            };
 
         case CLEAR_ERRORS:
             return {
-                error: null
-            }
+                error: null,
+            };
 
         default:
-            return state
+            return state;
     }
-}
+};
 
 export const productReducer = (state = {}, action) => {
     switch (action.type) {
-
         case DELETE_PRODUCT_REQUEST:
         case UPDATE_PRODUCT_REQUEST:
             return {
                 ...state,
-                loading: true
-            }
+                loading: true,
+            };
 
         case DELETE_PRODUCT_SUCCESS:
             return {
                 ...state,
                 loading: false,
-                isDeleted: action.payload
-            }
+                isDeleted: action.payload,
+            };
 
         case UPDATE_PRODUCT_SUCCESS:
             return {
                 ...state,
                 loading: false,
-                isUpdated: action.payload
-            }
-
+                isUpdated: action.payload,
+            };
 
         case DELETE_PRODUCT_FAIL:
         case UPDATE_PRODUCT_FAIL:
             return {
                 ...state,
-                error: action.payload
-            }
+                error: action.payload,
+            };
 
         case DELETE_PRODUCT_RESET:
             return {
                 ...state,
-                isDeleted: false
-            }
+                isDeleted: false,
+            };
 
         case UPDATE_PRODUCT_RESET:
             return {
                 ...state,
-                isUpdated: false
-            }
+                isUpdated: false,
+            };
 
         case CLEAR_ERRORS:
             return {
                 ...state,
-                error: null
-            }
+                error: null,
+            };
 
         default:
-            return state
+            return state;
     }
-}
+};
 
 export const productDetailsReducer = (state = { product: {} }, action) => {
     switch (action.type) {
-
         case PRODUCT_DETAILS_REQUEST:
             return {
                 ...state,
-                loading: true
-            }
+                loading: true,
+            };
 
         case PRODUCT_DETAILS_SUCCESS:
             return {
                 loading: false,
-                product: action.payload
-            }
+                product: action.payload,
+            };
 
         case PRODUCT_DETAILS_FAIL:
             return {
                 ...state,
-                error: action.payload
-            }
+                error: action.payload,
+            };
 
         case CLEAR_ERRORS:
             return {
                 ...state,
-                error: null
-            }
+                error: null,
+            };
 
         default:
-            return state
+            return state;
     }
-}
+};
 
 export const newReviewReducer = (state = {}, action) => {
     switch (action.type) {
-
         case NEW_REVIEW_REQUEST:
             return {
                 ...state,
-                loading: true
-            }
+                loading: true,
+            };
 
         case NEW_REVIEW_SUCCESS:
             return {
                 loading: false,
-                success: action.payload
-            }
+                success: action.payload,
+            };
 
         case NEW_REVIEW_FAIL:
             return {
                 ...state,
-                error: action.payload
-            }
+                error: action.payload,
+            };
 
         case NEW_REVIEW_RESET:
             return {
                 ...state,
-                success: false
-            }
+                success: false,
+            };
 
         case CLEAR_ERRORS:
             return {
                 ...state,
-                error: null
-            }
+                error: null,
+            };
 
         default:
-            return state
+            return state;
     }
-}
+};
 
 export const productReviewsReducer = (state = { review: [] }, action) => {
     switch (action.type) {
-
         case GET_REVIEWS_REQUEST:
             return {
                 ...state,
-                loading: true
-            }
+                loading: true,
+            };
 
         case GET_REVIEWS_SUCCESS:
             return {
                 loading: false,
-                reviews: action.payload
-            }
+                reviews: action.payload,
+            };
 
         case GET_REVIEWS_FAIL:
             return {
                 ...state,
-                error: action.payload
-            }
+                error: action.payload,
+            };
 
         case CLEAR_ERRORS:
             return {
                 ...state,
-                error: null
-            }
+                error: null,
+            };
 
         default:
-            return state
+            return state;
     }
-}
+};
 
 export const reviewReducer = (state = {}, action) => {
     switch (action.type) {
-
         case DELETE_REVIEW_REQUEST:
             return {
                 ...state,
-                loading: true
-            }
+                loading: true,
+            };
 
         case DELETE_REVIEW_SUCCESS:
             return {
                 ...state,
                 loading: false,
-                isDeleted: action.payload
-            }
+                isDeleted: action.payload,
+            };
 
         case DELETE_REVIEW_FAIL:
             return {
                 ...state,
-                error: action.payload
-            }
+                error: action.payload,
+            };
 
         case DELETE_REVIEW_RESET:
             return {
                 ...state,
-                isDeleted: false
-            }
+                isDeleted: false,
+            };
 
         case CLEAR_ERRORS:
             return {
                 ...state,
-                error: null
-            }
+                error: null,
+            };
 
         default:
-            return state
+            return state;
     }
-}
+};
