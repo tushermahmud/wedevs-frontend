@@ -44,7 +44,7 @@ export const productsReducer = (state = initialState, action) => {
             return {
                 ...state,
                 loading: true,
-                products: action.payload.products,
+                products: action.payload,
             };
         default:
             return state;

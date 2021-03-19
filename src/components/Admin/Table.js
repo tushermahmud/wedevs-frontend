@@ -1,8 +1,10 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
+import Button from '@material-ui/core/Button';
+import {Link} from "react-router-dom"
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
@@ -21,38 +23,10 @@ import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Layout from "../Layout";
-function createData(name, calories, fat, carbs, protein) {
-    console.log(name,calories,fat,carbs,protein)
-    return { name, calories, fat, carbs, protein };
-}
-const tusher=[{
-        name:"tusher",
-        id:"16301091",
-        job:{
-            name:"web developer"
-        },
-        experience:2,
-        destination:"home"
-    },
-    {
-        name:"jubel",
-        id:"16301092",
-        job:{
-            name:"iOS developer"
-        },
-        experience:3,
-        destination:"class"
-    },
-    {
-        name:"anik",
-        id:"16301093",
-        job:{
-            name:"Android developer"
-        },
-        experience:3,
-        destination:"university"
-    }
-    ];
+import {getProducts,deleteProduct} from "../../redux/actions/productActions"
+import {useSelector,useDispatch} from "react-redux"
+
+
 /*const tusher={
     name:"tusher",
     id:"16301091",
@@ -64,10 +38,7 @@ const tusher=[{
 }*/
 
 
-const rows = tusher.map(item =>{
-        return createData(item.name, item.id, item.job.name, item.experience, item.destination)
-    });
-console.log(rows)
+
 function descendingComparator(a, b, orderBy) {
     if (b[orderBy] < a[orderBy]) {
         return -1;
@@ -94,20 +65,21 @@ function stableSort(array, comparator) {
     return stabilizedThis.map((el) => el[0]);
 }
 
-const headCells = [
-    { id: 'name', numeric: false, disablePadding: true, label: 'Dessert (100g serving)' },
-    { id: 'calories', numeric: true, disablePadding: false, label: 'Calories' },
-    { id: 'fat', numeric: true, disablePadding: false, label: 'Fat (g)' },
-    { id: 'carbs', numeric: true, disablePadding: false, label: 'Carbs (g)' },
-    { id: 'protein', numeric: true, disablePadding: false, label: 'Protein (g)' },
-];
+
 
 function EnhancedTableHead(props) {
     const { classes, onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } = props;
     const createSortHandler = (property) => (event) => {
         onRequestSort(event, property);
     };
+    const headCells = [
+        { id: 'title', numeric: false, disablePadding: true, label: 'Title' },
+        { id: ' description', numeric: false, disablePadding: true, label: 'Description' },
+        { id: 'price', numeric: true, disablePadding: false, label: 'Price' },
+        { id: 'image', numeric: false, disablePadding: true, label: 'Image' },
+        { id: 'Actions', numeric: false, disablePadding: true, label: 'Actions' },
 
+    ];
     return (
         <TableHead>
             <TableRow>
@@ -240,6 +212,19 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const EnhancedTable=()=> {
+
+    const {products} = useSelector(state => state.productsReducer);
+    console.log(products);
+    function createData(id,title, description, price, image) {
+        return {id, title, description, price, image };
+    }
+   
+    const rows = products&&products.length?(products.map(item =>{
+        return createData(item.id,item.title, item.description, item.price, item.image)
+    })):[];
+    
+    const dispatch = useDispatch();
+
     const classes = useStyles();
     const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
@@ -247,6 +232,11 @@ const EnhancedTable=()=> {
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    useEffect(() => {
+
+        dispatch(getProducts())
+
+    }, [dispatch])
 
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
@@ -295,7 +285,9 @@ const EnhancedTable=()=> {
     const handleChangeDense = (event) => {
         setDense(event.target.checked);
     };
-
+    const deleteHandler=(id)=>{
+        dispatch(deleteProduct(id))
+    }
     const isSelected = (name) => selected.indexOf(name) !== -1;
 
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -325,17 +317,16 @@ const EnhancedTable=()=> {
                                 {stableSort(rows, getComparator(order, orderBy))
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((row, index) => {
-                                        const isItemSelected = isSelected(row.name);
+                                        const isItemSelected = isSelected(row.id);
                                         const labelId = `enhanced-table-checkbox-${index}`;
-                                        console.log(row.name)
+                                        console.log(row.id)
                                         return (
                                             <TableRow
                                                 hover
-                                                onClick={(event) => handleClick(event, row.name)}
                                                 role="checkbox"
                                                 aria-checked={isItemSelected}
                                                 tabIndex={-1}
-                                                key={row.name}
+                                                key={row.id}
                                                 selected={isItemSelected}
                                             >
                                                 <TableCell padding="checkbox">
@@ -345,12 +336,22 @@ const EnhancedTable=()=> {
                                                     />
                                                 </TableCell>
                                                 <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                    {row.name}
+                                                    {row.title}
                                                 </TableCell>
-                                                <TableCell align="right">{row.calories}</TableCell>
-                                                <TableCell align="right">{row.fat}</TableCell>
-                                                <TableCell align="right">{row.carbs}</TableCell>
-                                                <TableCell align="right">{row.protein}</TableCell>
+                                                <TableCell align="right">{row.description}</TableCell>
+                                                <TableCell align="right">{row.price}</TableCell>
+                                                <TableCell align="right"><img style={{width:"50px",height:"30px"}} src={`uploads/${row.image}`}/></TableCell>
+                                                <TableCell align="right"> 
+                                                <Link to={`/product/edit/${row.id}`}>
+                                                <Button variant="contained" color="primary">
+                                                    Edit
+                                                </Button>
+                                                </Link>
+                                                    <Button variant="contained" color="secondary" onClick={deleteHandler(row.id)}>
+                                                    Delete
+                                                    </Button>
+                                                </TableCell>
+
                                             </TableRow>
                                         );
                                     })}

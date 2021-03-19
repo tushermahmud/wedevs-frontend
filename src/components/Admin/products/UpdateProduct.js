@@ -1,13 +1,14 @@
 import { Title } from '@material-ui/icons'
 import React, { Fragment, useState, useEffect } from 'react'
+import {getProducts} from "../../../redux/actions/productActions"
 
 
 import { useAlert } from 'react-alert'
 import { useDispatch, useSelector } from 'react-redux'
-import { newProduct, clearErrors } from '../../../redux/actions/productActions'
+import { updateProduct, clearErrors } from '../../../redux/actions/productActions'
 import { NEW_PRODUCT_RESET } from '../../../redux/constant/productConstants'
 
-const NewProduct = ({ history }) => {
+const UpdateProduct = ({ history,match }) => {
 
     const [values, setValues] = useState({
         title: '',
@@ -17,10 +18,9 @@ const NewProduct = ({ history }) => {
       });
 
       var file,formData;
-      useEffect(() => {
-      }, [])
+      
     const alert = useAlert();
-    const {success,error} = useSelector(state => state.newProductReducer)
+    const {products} = useSelector(state => state.productsReducer)
     const dispatch = useDispatch();
     const { title, description,price,image } = values;
     const handleChange = (name) => (event) => {
@@ -28,40 +28,24 @@ const NewProduct = ({ history }) => {
         const value = name === 'image' ? event.target.files[0] : event.target.value;
         setValues({ ...values, [name]: value });
       };
-      console.log(error)
+      useEffect(() => {
+        const product=products.find(pd=>pd.id===parseInt(match.params.id));
+        setValues({title:product.title,description:product.description,price:product.price})
+        dispatch(getProducts())
 
-    useEffect(() => {
-        if (error) {
-            error.map(err=>{
-                console.log(err)
-                return alert.error(Object.values(err));
-
-            })
-            dispatch(clearErrors())
-        }
-
-        if (success) {
-            history.push('/products');
-            alert.success('Product created successfully');
-            dispatch({ type: NEW_PRODUCT_RESET })
-        }
-
-    }, [dispatch, alert, success,error, history])
-
+    }, [dispatch])
+    
     const submitHandler = (e) => {
         e.preventDefault();
-   
+        const id=match.params.id;
         console.log(image);
-        dispatch(newProduct({title,description,price,image}))
+        dispatch(updateProduct({title,description,price,image,id }))
         
 
-        // dispatch(newProduct(formData))
     }
 
-    // const onChange = e => {
 
-    //     const file = e.target.files[0]    }
-
+    
 
     return (
         <Fragment>
@@ -112,7 +96,7 @@ const NewProduct = ({ history }) => {
                             className='form-control'
                             value={price}
                             />
-      </div>
+                        </div>
 
 
                                 <button
@@ -121,7 +105,7 @@ const NewProduct = ({ history }) => {
                                     className="btn btn-block py-3"
                                     // disabled={loading ? true : false}
                                 >
-                                    CREATE
+                                    UPDATE
                                 </button>
 
                             </form>
@@ -134,4 +118,4 @@ const NewProduct = ({ history }) => {
     )
 }
 
-export default NewProduct
+export default UpdateProduct
